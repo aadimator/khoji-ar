@@ -24,4 +24,9 @@ public class DatabaseManager : MonoBehaviour {
 		FirebaseApp.DefaultInstance.SetEditorDatabaseUrl ("https://khoji-aadimator.firebaseio.com/");
 	}
 
+	public void CreateNewUser(User user, string uid) {
+		string userJSON = JsonUtility.ToJson (user);
+		Router.UserWithUID (uid).SetRawJsonValueAsync (userJSON);
+	}
+
 }
