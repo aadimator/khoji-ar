@@ -13,4 +13,8 @@ public class AuthManager : MonoBehaviour {
 		auth = FirebaseAuth.DefaultInstance;
 	}
 
+	public void SugnUpNewUser(string email, string password) {
+
+	}
+
 }
