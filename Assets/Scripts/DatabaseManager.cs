@@ -20,6 +20,8 @@ public class DatabaseManager : MonoBehaviour {
 		}
 
 		DontDestroyOnLoad (gameObject);
+
+		FirebaseApp.DefaultInstance.SetEditorDatabaseUrl ("https://khoji-aadimator.firebaseio.com/");
 	}
 
 }
