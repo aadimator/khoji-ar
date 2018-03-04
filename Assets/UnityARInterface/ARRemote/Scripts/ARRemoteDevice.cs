@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
@@ -24,9 +25,34 @@ namespace UnityARInterface
         private PlayerConnection m_PlayerConnection;
         private int m_EditorId;
         public bool isConnected { get { return m_PlayerConnection.isConnected; } }
-        private bool m_ServiceRunning = false;
         private Dictionary<Guid, UnityAction<SerializableSubMessage>> m_MessageHandler =
             new Dictionary<Guid, UnityAction<SerializableSubMessage>>();
+
+        private bool m_BackgroundRendering;
+        public bool BackgroundRendering
+        {
+            get
+            {
+                return m_BackgroundRendering;
+            }
+            set
+            {
+                m_BackgroundRendering = value;
+                if (m_ARInterface != null){
+                    m_ARInterface.BackgroundRendering = m_BackgroundRendering;
+                }
+            }
+        }
+
+        public bool IsRunning
+        {
+            get
+            {
+                if (m_ARInterface == null)
+                    return false;
+                return m_ARInterface.IsRunning;
+            }
+        }
 
         void Register(Guid guid, UnityAction<SerializableSubMessage> handler)
         {
@@ -49,6 +75,7 @@ namespace UnityARInterface
             Register(ARMessageIds.SubMessageIds.startService, StartServiceMessageHandler);
             Register(ARMessageIds.SubMessageIds.stopService, StopServiceMessageHandler);
             Register(ARMessageIds.SubMessageIds.enableVideo, EnableVideoMessageHandler);
+            Register(ARMessageIds.SubMessageIds.backgroundRendering, BackgroundRenderingMessageHandler);
         }
 
         private void OnDisable()
@@ -60,7 +87,7 @@ namespace UnityARInterface
         void OnGUI()
         {
             string message = "";
-            if (isConnected && !m_ServiceRunning)
+            if (isConnected && !IsRunning)
             {
                 message = "Connected. Waiting for Editor.";
             }
@@ -85,11 +112,11 @@ namespace UnityARInterface
 
         void StopService()
         {
+            StopAllCoroutines();
             m_ARInterface.StopService();
             ARInterface.planeAdded -= PlaneAddedHandler;
             ARInterface.planeUpdated -= PlaneUpdatedHandler;
             ARInterface.planeRemoved -= PlaneRemovedHandler;
-            m_ServiceRunning = false;
             m_ARInterface = null;
             m_HaveSentCameraParams = false;
         }
@@ -101,13 +128,19 @@ namespace UnityARInterface
             m_HaveSentCameraParams = false;
         }
 
+        void BackgroundRenderingMessageHandler(SerializableSubMessage message)
+        {
+            var requestedBackgroundRenderingState = message.GetDataAs<SerializableBackgroundRendering>();
+            BackgroundRendering = requestedBackgroundRenderingState.backgroundRendering;
+        }
+
         void StartServiceMessageHandler(SerializableSubMessage message)
         {
             var settings = message.GetDataAs<SerializableARSettings>();
             if (settings == null)
                 return;
 
-            if (m_ServiceRunning)
+            if (IsRunning)
             {
                 Debug.LogWarning("Received message to start service while service is already running. Restarting.");
                 m_ARInterface.StopService();
@@ -132,19 +165,28 @@ namespace UnityARInterface
         void StartService(SerializableARSettings serializedSettings)
         {
             m_CachedSettings = serializedSettings;
-            var arInterface = ARInterface.GetInterface();
-            m_ServiceRunning = arInterface.StartService(m_CachedSettings);
 
-            if (!m_ServiceRunning)
-                return;
+            StopAllCoroutines();
+            StartCoroutine(StartServiceRoutine());
+        }
+
+        IEnumerator StartServiceRoutine()
+        {
+            var arInterface = ARInterface.GetInterface();
+
+            yield return arInterface.StartService(m_CachedSettings);
+            if (!arInterface.IsRunning)
+                yield break;
 
             m_ARInterface = arInterface;
             m_ARInterface.SetupCamera(m_ARCamera);
+            m_ARInterface.BackgroundRendering = BackgroundRendering;
 
             ARInterface.planeAdded += PlaneAddedHandler;
             ARInterface.planeUpdated += PlaneUpdatedHandler;
             ARInterface.planeRemoved += PlaneRemovedHandler;
         }
+
 
         public void PlaneAddedHandler(BoundedPlane plane)
         {
@@ -228,7 +270,7 @@ namespace UnityARInterface
                 m_ARCamera.transform.rotation = pose.rotation;
             }
 
-            if (isConnected && m_ServiceRunning)
+            if (isConnected && IsRunning)
             {
                 var serializedFrame = new SerializableFrame(
                     m_ARCamera.projectionMatrix,
@@ -253,7 +295,7 @@ namespace UnityARInterface
                     SendToEditor(ARMessageIds.lightEstimate, serializedLightEstimate);
                 }
 
-                if (m_SendVideo)
+                if (m_SendVideo && m_ARInterface.BackgroundRendering)
                 {
                     if (m_ARInterface.TryGetCameraImage(ref m_CameraImage))
                     {

@@ -25,6 +25,20 @@ namespace UnityARInterface
             }
         }
 
+        public override bool BackgroundRendering
+        {
+            get { return base.BackgroundRendering; }
+
+            set
+            {
+                if (m_RemoteInterface != null)
+                {
+                    m_RemoteInterface.BackgroundRendering = base.BackgroundRendering = value;
+                }
+            }
+        }
+
+
         ARRemoteEditorInterface m_RemoteInterface;
         EditorConnection m_EditorConnection;
 
@@ -142,7 +156,7 @@ namespace UnityARInterface
                 message = string.Format("Connected to remote AR device: {0}", m_RemoteInterface.playerId);
                 var buttonRect = new Rect((Screen.width / 2) - 200, (Screen.height / 2) - 200, 400, 100);
 
-                if (m_RemoteInterface.serviceRunning)
+                if (m_RemoteInterface.IsRemoteServiceRunning)
                 {
                     if (GUI.Button(buttonRect, "Stop Remote AR Session"))
                         m_RemoteInterface.StopRemoteService();
@@ -175,6 +189,7 @@ namespace UnityARInterface
             m_ARInterface = m_RemoteInterface;
             ARInterface.SetInterface(m_RemoteInterface);
             m_RemoteInterface.sendVideo = sendVideo;
+            m_RemoteInterface.BackgroundRendering = BackgroundRendering;
         }
 
         private void OnDisable()

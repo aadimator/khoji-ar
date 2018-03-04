@@ -20,6 +20,7 @@
 
 namespace GoogleARCore
 {
+    using System;
     using System.Collections.Generic;
     using GoogleARCoreInternal;
     using UnityEngine;
@@ -32,42 +33,80 @@ namespace GoogleARCore
     /// </summary>
     public static class Session
     {
-        public static SessionConnectionState ConnectionState
+        /// <summary>
+        /// Gets current session status.
+        /// </summary>
+        public static SessionStatus Status
         {
             get
             {
-                return SessionManager.ConnectionState;
+                return LifecycleManager.Instance.SessionStatus;
             }
         }
 
         /// <summary>
-        /// Creates an anchor in the current ARCore session.
-        ///
-        /// Anchors a gameobject to a position/rotation in the Unity world relative to ARCore's understanding of the
-        /// physical world.  ARCore may periodically perform operations that affect the mapping of Unity world coordinates
-        /// to the physical world; an example of such being drift correction.  Anchors allow GameObjects to retain their
-        /// physical world location when these operations occur.
+        /// Creates a new Anchor at the given <c>Pose</c> that is attached to the <c>Trackable</c>.
+        /// If trackable is null, it creates a new anchor at a world pose.
+        /// As ARCore updates its understading of the space, it will update the
+        /// virtual pose of the of the anchor to attempt to keep the anchor in the same real world location.
         /// </summary>
-        /// <param name="position">The position to anchor.</param>
-        /// <param name="rotation">The rotation to anchor.</param>
-        /// <returns>A newly created anchor tracking <c>position</c> and <c>rotation</c> if successful, otherwise
-        /// <c>null</c>.</returns>
-        public static Anchor CreateAnchor(Vector3 position, Quaternion rotation)
+        /// <param name="pose">The Unity world pose where the anchor is to be creates.</param>
+        /// <param name="trackable">The Trackable to attach the Anchor to.</param>
+        /// <returns>The newly created anchor or null.</returns>
+        public static Anchor CreateAnchor(Pose pose, Trackable trackable = null)
         {
-            return  SessionManager.Instance.AnchorManager.CreateAnchor(position, rotation);
+            var nativeSession = LifecycleManager.Instance.NativeSession;
+            if (nativeSession == null)
+            {
+                return null;
+            }
+
+            if (trackable == null)
+            {
+                return nativeSession.SessionApi.CreateAnchor(pose);
+            }
+            else
+            {
+                return trackable.CreateAnchor(pose);
+            }
         }
 
         /// <summary>
-        /// Performs a raycast against physical objects being tracked by ARCore.
+        /// Gets Trackables ARCore has tracked.
         /// </summary>
-        /// <param name="ray">The starting point and direction of the ray.</param>
-        /// <param name="filter">A filter bitmask where each <c>TrackableHitFlag</c> which is set represents a category
-        /// of raycast hits the method call should consider valid.</param>
-        /// <param name="hitResult">A <c>TrackableHit</c> that will be set if the raycast is successful.</param>
-        /// <returns><c>true</c> if the raycast had a hit, otherwise <c>false</c>.</returns>
-        public static bool Raycast(Ray ray, TrackableHitFlag filter, out TrackableHit hitResult)
+        /// <typeparam name="T">The Trackable type to get.</typeparam>
+        /// <param name="trackables">A reference to a list of T that will be filled by the method call.</param>
+        /// <param name="filter">A filter on the type of data to return.</param>
+        public static void GetTrackables<T>(List<T> trackables, TrackableQueryFilter filter = TrackableQueryFilter.All) where T : Trackable
         {
-            return  SessionManager.Instance.RaycastManager.Raycast(ray, filter, out hitResult);
+            trackables.Clear();
+            var nativeSession = LifecycleManager.Instance.NativeSession;
+            if (nativeSession == null)
+            {
+                return;
+            }
+
+            nativeSession.GetTrackables<T>(trackables, filter);
+        }
+
+        /// <summary>
+        /// Checks the availability of the ARCore APK on the device.
+        /// </summary>
+        /// <returns>An AsyncTask that completes with an ApkAvailabilityStatus when the availability is known.</returns>
+        public static AsyncTask<ApkAvailabilityStatus> CheckApkAvailability()
+        {
+            return LifecycleManager.Instance.CheckApkAvailability();
+        }
+
+        /// <summary>
+        /// Requests an installation of the ARCore APK on the device.
+        /// </summary>
+        /// <param name="userRequested">Whether the installation was requested explicity by a user action.</param>
+        /// <returns>An AsyncTask that completes with an ApkInstallationStatus when the installation
+        /// status is resolved.</returns>
+        public static AsyncTask<ApkInstallationStatus> RequestApkInstallation(bool userRequested)
+        {
+            return LifecycleManager.Instance.RequestApkInstallation(userRequested);
         }
     }
 }
