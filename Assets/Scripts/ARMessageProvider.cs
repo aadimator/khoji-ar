@@ -6,8 +6,11 @@
 	using Mapbox.Unity.Utilities;
 	using Mapbox.Utils;
 	using Mapbox.Unity.Map;
+    using Firebase;
+    using Firebase.Unity.Editor;
+    using Firebase.Database;
 
-	public class ARMessageProvider : MonoBehaviour {
+    public class ARMessageProvider : MonoBehaviour {
 		/// <summary>
 		/// This loads messages according to GPS coordinates, removes messages, and repositions messages
 		/// within the scene. 
@@ -28,7 +31,30 @@
 
 		void Awake(){
 			_instance = this;
-		}
+
+            FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://khoji-aadimator.firebaseio.com/");
+            Unity.Utilities.Console.Instance.Log("Firebase connection", "lightblue");
+
+            DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
+            Unity.Utilities.Console.Instance.Log("Firebase reference", "lightblue");
+
+            FirebaseDatabase.DefaultInstance
+              .GetReference("users")
+              .GetValueAsync().ContinueWith(task => {
+                  if (task.IsFaulted)
+                  {
+                      // Handle the error...
+                      Unity.Utilities.Console.Instance.Log("Firebase users retrievel error", "red");
+                  }
+                  else if (task.IsCompleted)
+                  {
+                      DataSnapshot snapshot = task.Result;
+                      // Do something with snapshot...
+                      Unity.Utilities.Console.Instance.Log("user retrievel success", "lightblue");
+                  }
+              });
+
+        }
 
 		public void GotAlignment(){
 			if (deviceAuthenticated){
