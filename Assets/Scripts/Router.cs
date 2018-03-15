@@ -1,16 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Firebase;
+using Firebase.Database;
+using Firebase.Unity.Editor;
 
 public class Router : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
+	private static DatabaseReference baseRef = FirebaseDatabase.DefaultInstance.RootReference;
+
+	public static DatabaseReference Users() {
+		return baseRef.Child ("users");
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+
+	public static DatabaseReference UserWithUID(string uid) {
+		return baseRef.Child ("users").Child (uid);
 	}
 }
