@@ -38,21 +38,6 @@
             DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
             Unity.Utilities.Console.Instance.Log("Firebase reference", "lightblue");
 
-            FirebaseDatabase.DefaultInstance
-              .GetReference("users")
-              .GetValueAsync().ContinueWith(task => {
-                  if (task.IsFaulted)
-                  {
-                      // Handle the error...
-                      Unity.Utilities.Console.Instance.Log("Firebase users retrievel error", "red");
-                  }
-                  else if (task.IsCompleted)
-                  {
-                      DataSnapshot snapshot = task.Result;
-                      // Do something with snapshot...
-                      Unity.Utilities.Console.Instance.Log("user retrievel success", "lightblue");
-                  }
-              });
 
         }
 
@@ -70,6 +55,23 @@
                 } else {
                     UpdateARMessageLocations (deviceLocation.CurrentLocation.LatitudeLongitude);
 					Unity.Utilities.Console.Instance.Log("Repositioning messages!", "lightblue");
+
+					FirebaseDatabase.DefaultInstance
+						.GetReference("users")
+						.GetValueAsync().ContinueWith(task => {
+							if (task.IsFaulted)
+							{
+								// Handle the error...
+								Unity.Utilities.Console.Instance.Log("Firebase users retrievel error", "red");
+							}
+							else if (task.IsCompleted)
+							{
+								DataSnapshot snapshot = task.Result;
+								// Do something with snapshot...
+								Unity.Utilities.Console.Instance.Log("user retrievel success", "lightblue");
+							}
+						});
+					
 				}
 			} else {
 				Debug.Log ("Got Alignment---DEVICE NOT AUTHENTICATED!");
