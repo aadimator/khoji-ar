@@ -62,13 +62,13 @@
 							if (task.IsFaulted)
 							{
 								// Handle the error...
-								Unity.Utilities.Console.Instance.Log("Firebase users retrievel error", "red");
+								Unity.Utilities.Console.Instance.Log("Firebase users retrievel error" + task.Exception, "red");
 							}
 							else if (task.IsCompleted)
 							{
 								DataSnapshot snapshot = task.Result;
 								// Do something with snapshot...
-								Unity.Utilities.Console.Instance.Log("user retrievel success", "lightblue");
+								Unity.Utilities.Console.Instance.Log("user retrievel success" + snapshot.Value, "lightblue");
 							}
 						});
 					
