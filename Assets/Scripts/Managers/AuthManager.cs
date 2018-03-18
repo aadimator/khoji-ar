@@ -14,7 +14,15 @@ public class AuthManager : MonoBehaviour {
 	}
 
 	public void SugnUpNewUser(string email, string password) {
-
+		auth.CreateUserWithEmailAndPasswordAsync (email, password).ContinueWith (task => {
+			if (task.IsFaulted || task.IsCanceled) {
+				Debug.LogError("Sorry, there was an error creating your new account. ERROR: " + task.Exception);
+				return;
+			} else if (task.IsCompleted) {
+				Firebase.Auth.FirebaseUser newUser = task.Result;
+				Debug.LogFormat("Welcome to Khoji {0}", newUser.Email);
+			}
+		});
 	}
 
 }
