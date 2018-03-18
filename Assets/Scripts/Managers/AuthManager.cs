@@ -1,16 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Firebase;
+using Firebase.Auth;
 
 public class AuthManager : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
+	// Firebase API variables
+	Firebase.Auth.FirebaseAuth auth;
+
+	void Awake() {
+		auth = FirebaseAuth.DefaultInstance;
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
 }
