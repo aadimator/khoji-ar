@@ -13,7 +13,7 @@ public class AuthManager : MonoBehaviour {
 		auth = FirebaseAuth.DefaultInstance;
 	}
 
-	public void SugnUpNewUser(string email, string password) {
+	public void SignUpNewUser(string email, string password) {
 		auth.CreateUserWithEmailAndPasswordAsync (email, password).ContinueWith (task => {
 			if (task.IsFaulted || task.IsCanceled) {
 				Debug.LogError("Sorry, there was an error creating your new account. ERROR: " + task.Exception);
