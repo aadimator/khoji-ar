@@ -66,7 +66,15 @@ public class FormManager : MonoBehaviour {
 		if (task.IsFaulted || task.IsCanceled) {
 			UpdateStatus("Sorry, there was an error creating your new account. ERROR: " + task.Exception);
 		} else if (task.IsCompleted) {
-			Firebase.Auth.FirebaseUser newUser = task.Result;
+
+			if (operation == "sign_up") {
+				Firebase.Auth.FirebaseUser newUser = task.Result;
+				Debug.LogFormat ("Welcome to Khoji {0}!", newUser.Email);
+
+				User user = new User (newUser.Email, newUser.Email, "");
+				DatabaseManager.sharedInstance.CreateNewUser (user, newUser.UserId);
+			}
+				
 			UpdateStatus("Loading the game scene");
 
 			yield return new WaitForSeconds (1.5f);
