@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using Firebase;
 using Firebase.Auth;
@@ -9,20 +10,23 @@ public class AuthManager : MonoBehaviour {
 	// Firebase API variables
 	Firebase.Auth.FirebaseAuth auth;
 
+	// Delegates
+	public delegate IEnumerator AuthCallback ( Task<Firebase.Auth.FirebaseUser> Task, string operation);
+	public event AuthCallback authCallback;
+
 	void Awake() {
 		auth = FirebaseAuth.DefaultInstance;
 	}
 
 	public void SignUpNewUser(string email, string password) {
 		auth.CreateUserWithEmailAndPasswordAsync (email, password).ContinueWith (task => {
-			if (task.IsFaulted || task.IsCanceled) {
-				Debug.LogError("Sorry, there was an error creating your new account. ERROR: " + task.Exception);
-				return;
-			} else if (task.IsCompleted) {
-				Firebase.Auth.FirebaseUser newUser = task.Result;
-				Debug.LogFormat("Welcome to Khoji {0}", newUser.Email);
-			}
+			StartCoroutine(authCallback(task, "sign_up"));
 		});
 	}
 
+	public void LoginExistingUser(string email, string password) {
+		auth.SignInWithEmailAndPasswordAsync (email, password).ContinueWith (task => {
+			StartCoroutine(authCallback(task, "login"));
+		});
+	}
 }

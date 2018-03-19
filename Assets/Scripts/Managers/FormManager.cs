@@ -4,6 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Firebase;
+using Firebase.Auth;
+using UnityEngine.SceneManagement;
 
 public class FormManager : MonoBehaviour {
 
@@ -20,6 +24,9 @@ public class FormManager : MonoBehaviour {
 
 	void Awake() {
 		ToggleButtonStates (false);
+
+		// Auth delegate subscriptions
+		authManager.authCallback += HandleAuthCallback;
 	}
 
 	/// <summary>
@@ -41,13 +48,34 @@ public class FormManager : MonoBehaviour {
 
 	// Firebase methods
 	public void OnSignUp() {
+
+		authManager.SignUpNewUser (emailInput.text, passwordInput.text);
+
 		Debug.Log ("Sign Up");
 		UpdateStatus ("Sign Up");
 	}
 
 	public void OnLogin() {
+		authManager.LoginExistingUser (emailInput.text, passwordInput.text);
+
 		Debug.Log ("Login");
 		UpdateStatus ("Login");
+	}
+
+	IEnumerator HandleAuthCallback (Task<Firebase.Auth.FirebaseUser> task, string operation) {
+		if (task.IsFaulted || task.IsCanceled) {
+			UpdateStatus("Sorry, there was an error creating your new account. ERROR: " + task.Exception);
+		} else if (task.IsCompleted) {
+			Firebase.Auth.FirebaseUser newUser = task.Result;
+			UpdateStatus("Loading the game scene");
+
+			yield return new WaitForSeconds (1.5f);
+			SceneManager.LoadScene ("ManualSync");
+		}
+	}
+
+	void OnDestroy() {
+		authManager.authCallback -= HandleAuthCallback;
 	}
 
 	// Utilities
