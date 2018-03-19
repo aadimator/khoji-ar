@@ -15,4 +15,10 @@ public class User {
 		this.photoUrl = photoUrl;
 	}
 
+	public User(IDictionary<string, object> dict) {
+		this.email = dict ["email"].ToString();
+		this.name = dict ["name"].ToString();
+		this.photoUrl = dict ["photoUrl"].ToString();
+	}
+
 }

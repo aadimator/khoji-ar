@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Firebase;
@@ -27,6 +28,23 @@ public class DatabaseManager : MonoBehaviour {
 	public void CreateNewUser(User user, string uid) {
 		string userJSON = JsonUtility.ToJson (user);
 		Router.UserWithUID (uid).SetRawJsonValueAsync (userJSON);
+	}
+
+	public void GetContacts(Action<List<User>> completionBlock) {
+		List<User> tmpList = new List<User> ();
+
+		Router.Users ().GetValueAsync ().ContinueWith (task => {
+			DataSnapshot users = task.Result;
+
+			foreach(DataSnapshot user in users.Children) {
+				var usertDict = (IDictionary<string, object>) user.Value;
+				User newUser = new User(usertDict);
+				tmpList.Add(newUser);
+			}
+
+			completionBlock(tmpList);
+
+		});
 	}
 
 }

@@ -16,4 +16,12 @@ public class Router : MonoBehaviour {
 	public static DatabaseReference UserWithUID(string uid) {
 		return baseRef.Child ("users").Child (uid);
 	}
+
+	public static DatabaseReference Contacts() {
+		return baseRef.Child ("contacts");
+	}
+
+	public static DatabaseReference ContactsOfUID(string uid) {
+		return Contacts().Child (uid);
+	}
 }

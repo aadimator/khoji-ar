@@ -95,4 +95,13 @@ public class FormManager : MonoBehaviour {
 	private void UpdateStatus(string message) {
 		statusText.text = message;
 	}
+
+	public void Quit () 
+	{
+		#if UNITY_EDITOR
+		UnityEditor.EditorApplication.isPlaying = false;
+		#else
+		Application.Quit();
+		#endif
+	}
 }
