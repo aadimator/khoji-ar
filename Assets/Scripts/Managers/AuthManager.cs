@@ -8,13 +8,23 @@ using Firebase.Auth;
 public class AuthManager : MonoBehaviour {
 
 	// Firebase API variables
-	Firebase.Auth.FirebaseAuth auth;
+	FirebaseAuth auth;
+
+	public static AuthManager sharedInstance = null;
 
 	// Delegates
 	public delegate IEnumerator AuthCallback ( Task<Firebase.Auth.FirebaseUser> Task, string operation);
 	public event AuthCallback authCallback;
 
 	void Awake() {
+		if (sharedInstance == null) {
+			sharedInstance = this;
+		} else if (sharedInstance != this) {
+			Destroy (gameObject);
+		}
+
+		DontDestroyOnLoad (gameObject);
+
 		auth = FirebaseAuth.DefaultInstance;
 	}
 

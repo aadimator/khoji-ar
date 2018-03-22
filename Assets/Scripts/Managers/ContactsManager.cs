@@ -3,18 +3,25 @@ using System.Collections.Generic;
 using UnityEngine;
 using Firebase;
 using Firebase.Database;
+using Firebase.Auth;
 
 public class ContactsManager : MonoBehaviour {
 
 	public List<User> contactList = new List<User> ();
 
+	FirebaseAuth auth;
+
 	void Awake() {
 		contactList.Clear();
 
-//		DatabaseManager.sharedInstance.GetContacts (result => {
-//			contactList = result;
-//			Debug.Log(contactList[0].email);
-//		});
+		auth = FirebaseAuth.DefaultInstance;
+
+		DatabaseManager.sharedInstance.GetContacts (result => {
+			contactList = result;
+			Debug.Log(contactList[0].email);
+		}, auth.CurrentUser.UserId);
+
+		Debug.Log (contactList[0].email);
 
 //		Router.Users ().ChildAdded += NewUserAdded;
 

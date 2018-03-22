@@ -45,6 +45,10 @@
 			if (deviceAuthenticated){
 				if (!gotInitialAlignment) {
 					gotInitialAlignment = true;
+
+					Unity.Utilities.Console.Instance.Log("Current User : " + Firebase.Auth.FirebaseAuth.DefaultInstance.CurrentUser.UserId, "lightblue");
+					Unity.Utilities.Console.Instance.Log("Current User : " + Firebase.Auth.FirebaseAuth.DefaultInstance.CurrentUser.Email, "lightblue");
+
 					//set UI active once we are authenticated
 					UIBehavior.Instance.ShowUI ();
                     //load first messages

@@ -57,14 +57,14 @@ public class FormManager : MonoBehaviour {
 		authManager.SignUpNewUser (emailInput.text, passwordInput.text);
 
 		Debug.Log ("Sign Up");
-		UpdateStatus ("Sign Up");
+		UpdateStatus ("Creating a new account...");
 	}
 
 	public void OnLogin() {
 		authManager.LoginExistingUser (emailInput.text, passwordInput.text);
 
 		Debug.Log ("Login");
-		UpdateStatus ("Login");
+		UpdateStatus ("Logging in....");
 	}
 
 	IEnumerator HandleAuthCallback (Task<Firebase.Auth.FirebaseUser> task, string operation) {
@@ -79,6 +79,9 @@ public class FormManager : MonoBehaviour {
 				User user = new User (newUser.Email, newUser.Email, "");
 				DatabaseManager.sharedInstance.CreateNewUser (user, newUser.UserId);
 			}
+
+			Debug.Log ("Current User: " + FirebaseAuth.DefaultInstance.CurrentUser.UserId);
+			Debug.Log ("Result UID: " + task.Result.UserId);
 				
 			UpdateStatus("Loading the game scene");
 

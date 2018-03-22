@@ -16,7 +16,7 @@ public class DatabaseManager : MonoBehaviour {
 	void Awake() {
 		if (sharedInstance == null) {
 			sharedInstance = this;
-		} else if (sharedInstance != null) {
+		} else if (sharedInstance != this) {
 			Destroy (gameObject);
 		}
 
@@ -30,10 +30,10 @@ public class DatabaseManager : MonoBehaviour {
 		Router.UserWithUID (uid).SetRawJsonValueAsync (userJSON);
 	}
 
-	public void GetContacts(Action<List<User>> completionBlock) {
+	public void GetContacts(Action<List<User>> completionBlock, string uid) {
 		List<User> tmpList = new List<User> ();
 
-		Router.Users ().GetValueAsync ().ContinueWith (task => {
+		Router.ContactsOfUID (uid).GetValueAsync ().ContinueWith (task => {
 			DataSnapshot users = task.Result;
 
 			foreach(DataSnapshot user in users.Children) {
