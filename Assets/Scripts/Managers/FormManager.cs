@@ -27,6 +27,9 @@ public class FormManager : MonoBehaviour {
 
 		// Auth delegate subscriptions
 		authManager.authCallback += HandleAuthCallback;
+		if (FirebaseAuth.DefaultInstance.CurrentUser != null) {
+			SceneManager.LoadScene ("ManualSync");
+		}
 	}
 
 	/// <summary>

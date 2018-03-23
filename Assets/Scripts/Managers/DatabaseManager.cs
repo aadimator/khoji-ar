@@ -32,14 +32,39 @@ public class DatabaseManager : MonoBehaviour {
 
 	public void GetContacts(Action<List<User>> completionBlock, string uid) {
 		List<User> tmpList = new List<User> ();
+		Dictionary<String, String> contactIds = new Dictionary<String, String> ();
+
+		GetContactIds (result => {
+			contactIds = result;
+
+			Mapbox.Unity.Utilities.Console.Instance.Log("Number of contact ids: " + contactIds.Count, "lightblue");
+
+			foreach (String id in contactIds.Keys) {
+				Router.UserWithUID (id).GetValueAsync ().ContinueWith (task => {
+					DataSnapshot user = task.Result;
+
+					var usertDict = (IDictionary<string, object>) user.Value;
+					User newUser = new User(usertDict);
+					tmpList.Add(newUser);
+
+					completionBlock(tmpList);
+
+				});
+			}
+		}, uid);
+
+
+
+	}
+
+	public void GetContactIds(Action<Dictionary<String, String>> completionBlock, string uid) {
+		Dictionary<String, String> tmpList = new Dictionary<String, String> ();
 
 		Router.ContactsOfUID (uid).GetValueAsync ().ContinueWith (task => {
 			DataSnapshot users = task.Result;
 
 			foreach(DataSnapshot user in users.Children) {
-				var usertDict = (IDictionary<string, object>) user.Value;
-				User newUser = new User(usertDict);
-				tmpList.Add(newUser);
+				tmpList.Add(user.Key, user.Value.ToString());
 			}
 
 			completionBlock(tmpList);
