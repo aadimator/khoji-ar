@@ -24,9 +24,8 @@
 			DatabaseManager.sharedInstance.GetContacts (result => {
 				contactList = result;
 
-				foreach (User user in contactList) {
-					Unity.Utilities.Console.Instance.Log ("Contact List: " + user.email, "lightblue");
-				}
+				printUsers(contactList);
+
 			}, auth.CurrentUser.UserId);
 
 
@@ -36,6 +35,13 @@
 	//		Router.Users ().OrderByChild ("name");
 	//		Router.Users ().LimitToFirst (10);
 
+		}
+
+		void printUsers(List<User> contacts) {
+			Unity.Utilities.Console.Instance.Log ("Contact List Size: " + contacts.Count, "lightblue");
+			foreach (User user in contacts) {
+				Unity.Utilities.Console.Instance.Log ("Contact List: " + user.email, "lightblue");
+			}
 		}
 
 

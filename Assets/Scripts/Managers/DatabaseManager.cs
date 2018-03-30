@@ -5,6 +5,7 @@ using UnityEngine;
 using Firebase;
 using Firebase.Database;
 using Firebase.Unity.Editor;
+using System.Threading.Tasks;
 
 public class DatabaseManager : MonoBehaviour {
 
@@ -36,6 +37,7 @@ public class DatabaseManager : MonoBehaviour {
 
 		GetContactIds (result => {
 			contactIds = result;
+			tmpList.Clear();
 
 			Mapbox.Unity.Utilities.Console.Instance.Log("Number of contact ids: " + contactIds.Count, "lightblue");
 
@@ -47,14 +49,36 @@ public class DatabaseManager : MonoBehaviour {
 					User newUser = new User(usertDict);
 					tmpList.Add(newUser);
 
-					completionBlock(tmpList);
-
+					if (tmpList.Count == contactIds.Count)
+						completionBlock(tmpList);
 				});
-			}
+			}	
 		}, uid);
+	}
 
+	public void GetContactLocations(Action<List<Location>> completionBlock, string uid) {
+		List<Location> tmpList = new List<Location> ();
+		Dictionary<String, String> contactIds = new Dictionary<String, String> ();
 
+		GetContactIds (result => {
+			contactIds = result;
+			tmpList.Clear();
 
+			Mapbox.Unity.Utilities.Console.Instance.Log("Number of contact ids: " + contactIds.Count, "lightblue");
+
+			foreach (String id in contactIds.Keys) {
+				Router.LocationOfUID (id).GetValueAsync ().ContinueWith (task => {
+					DataSnapshot location = task.Result;
+
+					var locationDict = (IDictionary<string, object>) location.Value;
+					Location userLoc = new Location(locationDict);
+					tmpList.Add(userLoc);
+
+					if (tmpList.Count == contactIds.Count)
+						completionBlock(tmpList);
+				});
+			}	
+		}, uid);
 	}
 
 	public void GetContactIds(Action<Dictionary<String, String>> completionBlock, string uid) {
@@ -71,5 +95,7 @@ public class DatabaseManager : MonoBehaviour {
 
 		});
 	}
+
+
 
 }

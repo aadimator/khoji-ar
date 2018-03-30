@@ -18,4 +18,13 @@ public class Location {
 		this.latitude = latitude;
 	}
 
+    public Location(IDictionary<string, object> dict)
+    {
+        this.time = long.Parse(dict["time"].ToString());
+        this.speed = float.Parse(dict["speed"].ToString());
+        this.altitude = double.Parse(dict["altitude"].ToString());
+        this.longitude = double.Parse(dict["longitude"].ToString());
+        this.latitude = double.Parse(dict["latitude"].ToString());
+    }
+
 }

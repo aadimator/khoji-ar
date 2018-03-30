@@ -24,4 +24,12 @@ public class Router : MonoBehaviour {
 	public static DatabaseReference ContactsOfUID(string uid) {
 		return Contacts().Child (uid);
 	}
+
+	public static DatabaseReference Locations() {
+		return baseRef.Child ("locations");
+	}
+
+	public static DatabaseReference LocationOfUID(string uid) {
+		return Locations().Child (uid);
+	}
 }
