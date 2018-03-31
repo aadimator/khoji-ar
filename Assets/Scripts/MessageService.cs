@@ -23,18 +23,6 @@
 			_instance = this;
 		}
 
-		public void RemoveAllMessages(){
-			//new GameSparks.Api.Requests.LogEventRequest ()
-			//	.SetEventKey ("REMOVE_MESSAGES")
-			//	.Send ((response) => {
-			//	if (!response.HasErrors) {
-			//		Debug.Log ("Message Saved To GameSparks...");
-			//	} else {
-			//		Debug.Log ("Error Saving Message Data...");
-			//	}
-			//});
-		}
-
 		public void LoadAllMessages(){
 
 			List<GameObject> messageObjectList = new List<GameObject> ();
