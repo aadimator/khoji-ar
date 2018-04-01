@@ -5,15 +5,14 @@
 	using UnityEngine;
 	//using GameSparks.Core;
 
-	public class MessageService : MonoBehaviour {
+	public class MessageManager : MonoBehaviour {
 
 		/// <summary>
-		/// This class handles communication with gamesparks for
-		/// removing, loading, and writing new messages. New Message
+		/// This class handles loading, and writing new messages. New Message
 		/// objects are instantiated here.
 		/// </summary>
-		private static MessageService _instance;
-		public static MessageService Instance { get { return _instance; } } 
+		private static MessageManager _instance;
+		public static MessageManager Instance { get { return _instance; } } 
 
 		public Transform mapRootTransform;
 
@@ -27,15 +26,17 @@
 
 			List<GameObject> messageObjectList = new List<GameObject> ();
 
-            GameObject MessageBubble = Instantiate(messagePrefabAR, mapRootTransform);
-            Message message = MessageBubble.GetComponent<Message>();
+            
 
-            message.latitude = 33.9858943;
-            message.longitude = 72.9703613;
-            message.text = "aadimator";
-            messageObjectList.Add(MessageBubble);
+            //GameObject MessageBubble = Instantiate(messagePrefabAR, mapRootTransform);
+            //Message message = MessageBubble.GetComponent<Message>();
 
-            Unity.Utilities.Console.Instance.Log("Added aadimator to list", "lightblue");
+            //message.latitude = 33.9858943;
+            //message.longitude = 72.9703613;
+            //message.text = "aadimator";
+            //messageObjectList.Add(MessageBubble);
+
+            //Unity.Utilities.Console.Instance.Log("Added aadimator to list", "lightblue");
 
             //new GameSparks.Api.Requests.LogEventRequest().SetEventKey("LOAD_MESSAGE").Send((response) => {
             //	if (!response.HasErrors) {
@@ -57,23 +58,6 @@
             //});
             //pass list of objects to ARmessage provider so they can be placed
             ARMessageProvider.Instance.LoadARMessages (messageObjectList);
-		}
-
-		public void SaveMessage(double lat, double lon, string text){
-			//new GameSparks.Api.Requests.LogEventRequest ()
-
-			//	.SetEventKey ("SAVE_GEO_MESSAGE")
-			//	.SetEventAttribute ("LAT", lat.ToString())
-			//	.SetEventAttribute ("LON", lon.ToString())
-			//	.SetEventAttribute ("TEXT", text)
-			//	.Send ((response) => {
-					
-			//	if (!response.HasErrors) {
-			//		Debug.Log ("Message Saved To GameSparks...");
-			//	} else {
-			//		Debug.Log ("Error Saving Message Data...");
-			//	}
-			//});
 		}
 	}
 }

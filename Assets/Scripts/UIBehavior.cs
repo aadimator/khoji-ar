@@ -29,7 +29,6 @@
 
 		public void RemoveButtonDown(){
 			HomeScreen.SetActive (false);
-			MessageService.Instance.RemoveAllMessages ();
 			ARMessageProvider.Instance.RemoveCurrentMessages ();
 			StartCoroutine (DelayRemoveRoutine ());
 		}
