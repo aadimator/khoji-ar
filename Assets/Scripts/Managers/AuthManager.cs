@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Firebase;
 using Firebase.Auth;
+using UnityEngine.SceneManagement;
 
 public class AuthManager : MonoBehaviour {
 
@@ -39,6 +40,12 @@ public class AuthManager : MonoBehaviour {
 			StartCoroutine(authCallback(task, "login"));
 		});
 	}
+
+    public void OnSignOut()
+    {
+        auth.SignOut();
+        SceneManager.LoadScene("Onboarding");
+    }
 
 	// Handle initialization of the necessary firebase modules:
 	void InitializeFirebase() {

@@ -28,7 +28,7 @@ public class FormManager : MonoBehaviour {
 		// Auth delegate subscriptions
 		authManager.authCallback += HandleAuthCallback;
 		if (FirebaseAuth.DefaultInstance.CurrentUser != null) {
-			SceneManager.LoadScene ("ManualSync");
+			SceneManager.LoadScene ("WorldScaleAR");
 		}
 	}
 
@@ -89,7 +89,7 @@ public class FormManager : MonoBehaviour {
 			UpdateStatus("Loading the game scene");
 
 			yield return new WaitForSeconds (1.5f);
-			SceneManager.LoadScene ("ManualSync");
+			SceneManager.LoadScene ("WorldScaleAR");
 		}
 	}
 
