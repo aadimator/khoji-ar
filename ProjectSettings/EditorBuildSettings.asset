@@ -9,5 +9,5 @@ EditorBuildSettings:
     path: Assets/Scenes/Onboarding.unity
     guid: 7cecbdff1fb6ea54dbc2a13c30635c59
   - enabled: 1
-    path: Assets/MapboxAR/Examples/Scenes/WorldScaleAR.unity
-    guid: c60dfd6bb74264e44b3dbf93e9d129c4
+    path: Assets/Scenes/WorldScaleAR.unity
+    guid: 4a4f39672910cfe4ba288a519ed4fe3b
