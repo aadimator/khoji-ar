@@ -12,7 +12,12 @@ public class AuthManager : MonoBehaviour
     // Firebase API variables
     FirebaseAuth auth;
 
-    public static AuthManager sharedInstance = null;
+    private static AuthManager _instance;
+
+    public static AuthManager Instance
+    {
+        get { return _instance; }
+    }
 
     // Delegates
     public delegate IEnumerator AuthCallback(Task<Firebase.Auth.FirebaseUser> Task, string operation);
@@ -20,18 +25,21 @@ public class AuthManager : MonoBehaviour
 
     void Awake()
     {
-        if (sharedInstance == null)
+        if (_instance != null && _instance != this)
         {
-            sharedInstance = this;
-        }
-        else if (sharedInstance != this)
-        {
-            Destroy(gameObject);
+            Destroy(this.gameObject);
+            return;
         }
 
-        DontDestroyOnLoad(gameObject);
+        _instance = this;
+        DontDestroyOnLoad(this.gameObject);
 
         InitializeFirebase();
+    }
+
+    private void Start()
+    {
+        
     }
 
     public void SignUpNewUser(string email, string password)
@@ -54,8 +62,6 @@ public class AuthManager : MonoBehaviour
     {
         //Mapbox.Unity.Utilities.Console.Instance.Log("Signing out", "lightblue");
 
-        if (auth == null) Debug.Log("auth is null");
-
         auth.SignOut();
 
         //Mapbox.Unity.Utilities.Console.Instance.Log("Signing out after", "lightblue");
@@ -64,7 +70,7 @@ public class AuthManager : MonoBehaviour
     // Handle initialization of the necessary firebase modules:
     void InitializeFirebase()
     {
-        //Mapbox.Unity.Utilities.Console.Instance.Log("Setting up Firebase Auth", "lightblue");
+        Debug.Log("Setting up Firebase Auth");
         auth = FirebaseAuth.DefaultInstance;
         auth.StateChanged += AuthStateChanged;
 
@@ -73,7 +79,8 @@ public class AuthManager : MonoBehaviour
 
     void OnDestroy()
     {
-        auth.StateChanged -= AuthStateChanged;
+        if (auth != null) 
+            auth.StateChanged -= AuthStateChanged;
         auth = null;
     }
 

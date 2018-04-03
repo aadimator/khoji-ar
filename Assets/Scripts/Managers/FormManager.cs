@@ -20,13 +20,19 @@ public class FormManager : MonoBehaviour {
 
 	public Text statusText;
 
-	public AuthManager authManager;
+	AuthManager authManager;
 
-	void Awake() {
+	void Start() {
 		ToggleButtonStates (false);
+
+        authManager = AuthManager.Instance;
+
+        if (AuthManager.Instance == null) Debug.Log("AuthManager.Instance == null");
+        if (authManager == null) Debug.Log("authManager == null");
 
 		// Auth delegate subscriptions
 		authManager.authCallback += HandleAuthCallback;
+
 		if (FirebaseAuth.DefaultInstance.CurrentUser != null) {
 			SceneManager.LoadScene ("WorldScaleAR");
 		}
@@ -56,15 +62,16 @@ public class FormManager : MonoBehaviour {
 
 	// Firebase methods
 	public void OnSignUp() {
-
-		authManager.SignUpNewUser (emailInput.text, passwordInput.text);
+        UpdateStatus("Sign up pressed");
+        authManager.SignUpNewUser (emailInput.text, passwordInput.text);
 
 		Debug.Log ("Sign Up");
 		UpdateStatus ("Creating a new account...");
 	}
 
 	public void OnLogin() {
-		authManager.LoginExistingUser (emailInput.text, passwordInput.text);
+        UpdateStatus("Log in pressed");
+        authManager.LoginExistingUser (emailInput.text, passwordInput.text);
 
 		Debug.Log ("Login");
 		UpdateStatus ("Logging in....");

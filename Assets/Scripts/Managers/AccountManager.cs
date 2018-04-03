@@ -5,13 +5,15 @@ using UnityEngine.SceneManagement;
 
 public class AccountManager : MonoBehaviour {
 
-    AuthManager authManager = AuthManager.sharedInstance;
+    AuthManager authManager = AuthManager.Instance;
 
     public void OnSignOut()
     {
         Mapbox.Unity.Utilities.Console.Instance.Log("OnSignOut()", "lightblue");
 
-        if(authManager == null)
+        Debug.Log("OnSignOut()");
+
+        if (authManager == null)
         {
             Debug.Log("authmanager is null");
         }
@@ -20,7 +22,12 @@ public class AccountManager : MonoBehaviour {
 
         Mapbox.Unity.Utilities.Console.Instance.Log("after auth.SignOut()", "lightblue");
 
+        Debug.Log("Changing Scene");
+
         SceneManager.LoadScene("Onboarding");
+
+        Debug.Log("Scene Changed");
+
 
         Mapbox.Unity.Utilities.Console.Instance.Log("after SceneChange", "lightblue");
     }
