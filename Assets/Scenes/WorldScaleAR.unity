@@ -261,6 +261,12 @@ Transform:
   m_PrefabParentObject: {fileID: 4526069144002162, guid: 35e76f6e52f5c4252a0b703cc2019a37,
     type: 2}
   m_PrefabInternal: {fileID: 1002213147}
+--- !u!114 &1002213151 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114628498580757726, guid: 35e76f6e52f5c4252a0b703cc2019a37,
+    type: 2}
+  m_PrefabInternal: {fileID: 1002213147}
+  m_Script: {fileID: 11500000, guid: 0d2f95bcf49014079b9d10228e3006a8, type: 3}
 --- !u!1 &1081685926
 GameObject:
   m_ObjectHideFlags: 0
@@ -841,6 +847,7 @@ MonoBehaviour:
   _map: {fileID: 1002213149}
   currentMessages: []
   deviceLocation: {fileID: 1002213148}
+  abstractAlignment: {fileID: 1002213151}
 --- !u!4 &2087447510
 Transform:
   m_ObjectHideFlags: 0

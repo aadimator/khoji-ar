@@ -9,6 +9,8 @@
     using Firebase;
     using Firebase.Unity.Editor;
     using Firebase.Database;
+    using Mapbox.Unity.Location;
+    using System;
 
     public class ARMessageProvider : MonoBehaviour
     {
@@ -29,9 +31,14 @@
 
         public Mapbox.Unity.Location.DeviceLocationProvider deviceLocation;
 
+        public AbstractAlignmentStrategy abstractAlignment;
+
         void Awake()
         {
             _instance = this;
+
+            deviceLocation.OnLocationUpdated += HandleLocationUpdate;
+            abstractAlignment.OnAlignmentAvailable += HandleAlignment;
 
             FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://khoji-aadimator.firebaseio.com/");
             Unity.Utilities.Console.Instance.Log("Firebase connection", "lightblue");
@@ -40,6 +47,16 @@
             Unity.Utilities.Console.Instance.Log("Firebase reference", "lightblue");
 
 
+        }
+
+        private void HandleAlignment(Alignment obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void HandleLocationUpdate(Location obj)
+        {
+            throw new NotImplementedException();
         }
 
         public void GotAlignment()
